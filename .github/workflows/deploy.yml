@@ -16,8 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: r-lib/actions/setup-r@master
       - name: deploy
-        uses: BDSI-Utwente/shinyapps-deploy-github-action@v1
         with:
           # account and application name (https://<accountName>.shinyapps.io/<appName>)
           appName: conservation_data_discovery
@@ -26,3 +26,11 @@ jobs:
           # token and secret obtained from https://www.shinyapps.io/admin/#/tokens
           accountToken: ${{ secrets.SHINYAPPS_TOKEN }}
           accountSecret: ${{ secrets.SHINYAPPS_SECRET }}
+
+      - name: Push to shiny.io
+        run: |
+          Rscript -e "rsconnect::setAccountInfo(name='username', token=${{secrets.SHINYAPPS_TOKEN}}, secret=${{secrets.SHINYAPPS_SECRET}})"
+          Rscript -e "rsconnect::deployApp(appName = 'appname')" 
+
+
+          on: [push, pull_request]
